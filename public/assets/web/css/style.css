@@ -1,0 +1,1250 @@
+
+
+.datepicker-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+.datepicker-wrapper input {
+    border: none;
+    outline: none;
+    padding-right: 8px; /* 아이콘과의 간격 */
+}
+
+.datepicker-wrapper .calendar-icon {
+    cursor: pointer;
+    /* 아이콘 크기나 색상 지정 */
+}
+
+.noto-sans-kr {
+    font-family: "Noto Sans KR", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+
+#wrap {
+    width: 1180px;
+    height: auto;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+
+
+/* common pop style start  */
+
+.unitType1 {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #5c5c5c;
+}
+
+.common_pop_wrap {
+    display: none;
+    position: fixed;
+    z-index: 30;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+
+}
+
+.common_pop_conkol {
+    background-color: #fff;
+    border-radius: 10px;
+    z-index: 32;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow-y: auto; /* 안쪽만 스크롤 */
+    overflow-x: hidden
+}
+
+.common_pop_conkol .area1 {
+    padding: 10px 0;
+    position: relative;
+}
+
+.common_pop_conkol .area1 .pop_head_title {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.common_pop_conkol .area1 i {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 22px;
+}
+
+.common_pop_conkol .lastArea {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+}
+
+.common_pop_conkol .lastArea .btn_close {
+    width: 60px;
+    height: 30px;
+}
+
+/* common pop style end  */
+
+/* main_View start  -------------------------------- */
+
+.main_wrap_ver4 .merbox {
+    /* margin-bottom: 40px; */
+    width: 1178px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    align-items: flex-start;
+    /* display: grid; */
+}
+
+
+.main_filter + .main_filter::before {
+    content: "|";
+    margin: 0 15px;
+    color: #ccc;
+}
+
+.main_filter a.f1.active {
+    color: var(--main-color);
+    font-weight: 500;
+}
+
+.main_wrap_ver4 .mer_wrap_type4 {
+    width: calc((100% - 60px) / 4);
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /*width: 270px;*/
+
+}
+
+.main_wrap_ver4 .mer_wrap_type4.auth_style {
+    width: calc((100% - 60px) / 4);
+    min-height: 320px;
+    height: 320px;
+
+}
+
+.main_wrap_ver4 .mer_wrap_type4.guest_style {
+    /*width: 260px;*/
+    /*width: 100%;*/
+    width: calc((100% - 60px) / 4);
+    min-height: 280px;
+    height: 280px;
+}
+
+
+.main_wrap_ver4 .mer_wrap_type4 .thumbox {
+    /*width: 268px;*/
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    position: relative;
+
+}
+
+.main_wrap_ver4 .mer_wrap_type4 .thumbox .nation {
+    padding: 0 10px ;
+    height: 30px;
+    line-height: 30px;
+    background-color: var(--tag-color);
+    /*font-size: 14px;*/
+    text-align: center;
+    border-radius: 5px;
+    position: absolute;
+    top:10px;
+    left:10px;
+    z-index: 20;
+}
+.main_wrap_ver4 .mer_wrap_type4 .thumbox img {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+}
+
+.main_wrap_ver4 .mer_wrap_type4 .ttl_box {
+    width: 250px;
+    min-height: 28px;
+    height: auto;
+
+}
+.main_wrap_ver4 .mer_wrap_type4 .price_box {
+    width: auto;
+    height: 28px;
+    /*padding: 0 10px;*/
+}
+
+.main_wrap_ver4 .mer_wrap_type4 .ttl_box .title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.main_wrap_ver4 .mer_wrap_type4 .ttl_box .w_name {
+    font-size: 14px;
+    /*font-weight: 600;*/
+    color: #5c5c5c;
+}
+
+.mer_wrap_type4 .cartbtn_box {
+    margin: 5px 0;
+
+}
+
+.main_wrap_ver4 .mer_wrap_type4 .tagbox .t1_type {
+    background-color: var(--main-color);
+    color: #fff;
+    height: 24px;
+}
+
+.mer_wrap_type4 .cartbtn_box .cartbtn {
+    border: 1px solid #ececec;
+    border-radius: 5px;
+    width: 250px;
+    height: 36px;
+    background-color: #fff;
+    color: #5c5c5c;
+    text-align: center;
+}
+
+.mer_wrap_type4 .cartbtn_box .text {
+    line-height: 36px;
+}
+
+.mer_wrap_type4 .price_box .price {
+    color: var(--main-color);
+    font-weight: 600;
+}
+
+.mer_wrap_type4 .price_box .calc {
+    font-size: 14px;
+    color: #5c5c5c;
+}
+
+.mer_wrap_type4 .itembox {
+    padding: 0 10px;
+
+}
+
+
+/* main_View end  -------------------------------- */
+
+.infockeditor .ck.ck-toolbar{
+    position: sticky;
+    top: 0;
+    left:0;
+    z-index: 10;
+    background: #fff;
+
+    width: 520px;
+    max-height: 200px;
+    box-sizing: border-box;
+}
+.ck-editor__editable {
+    position: absolute;
+    top:36px;
+    left:0px;
+    width: 520px;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    overflow: hidden;
+    overflow-y: scroll;
+    box-sizing: border-box;
+    /*overflow-y: visible, hidden, clip, scroll, auto, */
+}
+
+.ck-caption {
+    display: none !important;
+}
+
+
+.main-container,
+.editor-container,
+.editor-container__editor {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ck.ck-editor {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ck.ck-toolbar {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+}
+
+.ck-editor__main {
+    flex: 1 1 0;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+
+
+
+/********************************************************************************************************************************************************
+ *  공통 - list-area
+********************************************************************************************************************************************************/
+th, td {
+    line-height: 20px;
+}
+
+.list-area{
+    /* border-top: 1px solid #7389A0;
+    border-bottom: 1px solid #7389A0; */
+    width: 100%;
+}
+.list-area table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.list-area thead tr{
+    background-color: var(--cartbg);
+    /* border:1px solid #000; */
+    /* border-bottom: 1px solid #C7D3E0; */
+}
+.list-area thead tr,
+.list-area tbody tr {
+    /*border-bottom:1px solid #7c7c7c;*/
+}
+.list-area th,
+.list-area td {
+    border-right: 1px solid #7c7c7c;
+}
+
+/*.list-area th:last-child  {*/
+/*    border-right: 1px solid transparent;*/
+/*}*/
+.list-area thead tr th{
+    /*padding: 10px 5px;*/
+    vertical-align: middle;
+    font-weight: 400;
+}
+
+
+.list-area table .herbName {
+    /*color:var(--second-color);*/
+    color: blue;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.list-area tbody tr th,
+.list-area tbody tr td,
+.list-area tfoot tr th,
+.list-area tfoot tr td {
+    /*padding: 6px 6px;*/
+    /* vertical-align: top; */
+    height: 32px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.list-area thead span {
+    font-weight: 300;
+    font-size: 15px;
+}
+
+.bardcodeTxt{
+    text-align: left;
+    margin-top: -20px;
+    padding-left: 20px;
+    font-weight: 700;
+}
+
+.list-area.top-table-area{
+    /* border : 1px solid black; */
+    /*border-bottom : 1px solid black;*/
+}
+
+.modal-con {
+    margin: 0 auto;
+    border:1px solid #000;
+    width: 100vw;
+
+    padding: 10px;
+}
+.btn-wrap,
+.modal-con ~.btn-wrap {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+.btn-wrap .btntype7 {
+    margin-right: 20px;
+}
+
+.list-area.bottom-table-area {
+    /* margin-top: 10px; */
+    /*border: 1px solid #000;*/
+}
+
+.modal-con .list-area table {
+    text-wrap: nowrap;
+
+}
+
+.list-area.top-table-area tr {
+    border: 1px solid #000;
+    text-wrap: nowrap;
+
+}
+.list-area.top-table-area tbody tr:nth-of-type(2) td {
+    padding: 20px 6px;
+}
+.list-area.top-table-area tbody th {
+    text-wrap: nowrap;
+    /*border-right: 1px solid #000;*/
+    background-color: var(--cartbg);
+    /* background: #ececec81;  */
+}
+.list-area.top-table-area tbody td {
+    text-wrap: nowrap;
+    background: #fff;
+}
+
+/*statement_View start ------------*/
+
+.tbl_statement td {
+    height: 32px !important;
+}
+
+/*statement_View end ------------*/
+/*herbStatement_View start ------------*/
+
+.herb_statement_wrap {
+    margin: 0 auto;
+    /*margin: ;*/
+    margin: 20px;
+}
+
+.herb_statement_wrap .area1 .main_title {
+    font-size: 22px;
+    font-weight: 500;
+    border:1px solid #000;
+    text-align: center;
+}
+
+.herb_statement_wrap .area1 .p_name {
+    text-align: center;
+    font-size: 14px;
+
+}
+
+.herb_statement_wrap .herb_statement_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.herb_statement_wrap .herb_statement_table th {
+    font-weight: normal;
+    background-color: #ececec40;
+}
+.herb_statement_wrap .herb_statement_table th,
+.herb_statement_wrap .herb_statement_table td {
+    height: 30px;
+    border:1px solid #000;
+    text-align: center;
+}
+
+
+/*herbStatement_View end ------------*/
+
+/********************************************************************************************************************************************************
+ *  공통 - btn
+********************************************************************************************************************************************************/
+
+.btn-line-default i,
+.btn-line-black i,
+.btn-line-brand i,
+.btn-fill-brand i {
+    margin-left: 10px;
+}
+.btn-line-disabled {
+    color: #a3b6cb;
+}
+
+
+.sbtn-line-default {
+    /* border: 1px solid #C7D3E0; */
+    border-radius: 4px;
+    display: block;
+    margin-right: 0;
+}
+
+/**************** 바코드 출력 ****************/
+.modal-list-area table,
+.barcode-top table,
+.barcode-bottom table  {
+    width: 100%;
+    text-align: center;
+}
+.modal-list-area th,
+.modal-list-area td,
+.barcode-top th,
+.barcode-top td,
+.barcode-bottom th,
+.barcode-bottom td {
+    padding: 6px 6px;
+    text-align: center;
+    height: 36px;
+}
+
+
+.barcode-top colgroup col:nth-of-type(1) {
+    width: 70%;
+}
+.barcode-top colgroup col:nth-of-type(2) {
+    width: 12%;
+    min-width: 86px;
+}
+.barcode-top colgroup col:nth-of-type(3) {
+    width: 18%;
+}
+.barcode-top td:first-child {
+    vertical-align: middle;
+}
+.barcode-top td:last-child {
+    text-align: left;
+}
+.barcode-top {
+    margin-bottom: 10px;
+}
+
+
+
+.barcode-bottom col {
+    width: 40%;
+}
+.barcode-bottom col:first-child {
+    width: 60%;
+}
+.barcode-bottom td {
+    height: 108px;
+    vertical-align: middle;
+}
+.barcode-bottom {
+    margin-top: 10px;
+}
+.print-area {
+    background: #fff;
+    padding: 15px 0;
+}
+.print-info {
+    margin: 40px 0;
+    color:#5c5c5c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.authred {
+    color: red;
+}
+
+.authgreen {
+    color: green;
+}
+
+
+/* ------------ login_View start */
+
+
+.login {
+    text-align: center;
+    /*display: flex;*/
+    /*flex-flow: column;*/
+    /*border:1px solid mediumpurple;*/
+}
+
+.login_box {
+    margin: 0 auto;
+    width: 380px;
+    height: 680px;
+    border:1px solid transparent;
+}
+
+.login > p {
+    width: 380px;
+    height: 60px;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
+.login_con {
+    width: 380px;
+    height: 60px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.login_con > input {
+    width: 380px;
+    height: 60px;
+    /*border-radius: 5px;*/
+    font-size: 22px;
+    padding: 0 10px;
+    border:none;
+    border-bottom: 2px solid #5c5c5c;
+    background-color: transparent;
+}
+
+.login_con .id_clear,
+.login_con .btn_box {
+    position: absolute;
+    top:50%;
+    right:10px;
+    transform: translateY(-50%);
+
+}
+
+.login_con button.clearBtn,
+.login_con button.pw_toggle {
+    border:none;
+    background-color: transparent;
+    font-size: 22px;
+    color: #3b3b3b;
+    /*color:red;*/
+    /*text-align: ;*/
+}
+
+
+.autoLogin input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 20px;
+}
+
+.clearbtn > i {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    z-index: 12;
+}
+
+.inputcon input:not(:placeholder-shown) + .clearbtn {
+    display: block;
+}
+
+.login_wrap {
+    width: 100%;
+}
+.login_wrap .main_title {
+    margin: 80px 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.login_wrap button.btnLogin {
+    width: 380px;
+    height: 60px;
+    background-color: var(--main-color);
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+
+
+/* ------------ login_View end */
+/* ------------ join_View start */
+
+.join_contents {
+    /*position: relative;*/
+
+}
+.join_wrap {
+    margin: 0 auto;
+    width:500px;
+    height: auto;
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
+}
+.join_wrap .area1 {
+    /*margin-top: 100px;*/
+    padding-top: 80px;
+    margin-bottom: 40px;
+}
+
+.join_wrap .area2 {
+    width: 100%;
+    border: 1px solid #ececec;
+    border-radius: 20px;
+    padding: 40px 0;
+
+}
+
+.join_wrap .data_box {
+    margin-bottom: 12px;
+}
+
+.join_wrap .data_box .cat{
+    width: 100px;
+    margin-right: 20px;
+    color: #5c5c5c;
+
+}
+
+.join_wrap .data_box .input_type {
+    width:220px;
+    height: 40px;
+    border:none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    /*background-color: #ececec40;*/
+}
+
+.join_wrap .data_box .input_type.typ2 {
+    width:70px;
+    height: 40px;
+    border:none;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    /*background-color: #ececec40;*/
+}
+
+
+
+.join_wrap .data_box .input_type {
+
+}
+
+.join_wrap .btn_box {
+    margin-top: 20px;
+}
+.join_wrap .btn_box .btn_join {
+    /*padding-top: 20px;*/
+    border:none;
+    border-radius: 10px;
+    width: 340px;
+    height: 50px;
+    line-height: 50px;
+    background-color: var(--main-color);
+    font-size: 18px;
+    color: #fff;
+}
+
+.join_wrap #Xbtn {
+    /*color: red;*/
+    position: fixed;
+    top:20px;
+    left:40px;
+    font-size: 30px;
+    /*font-weight: 400;*/
+
+}
+.join_wrap .btn_box .msg {
+    padding: 10px 0;
+    color: #5c5c5c;
+    font-size: 14px;
+}
+
+
+.join_wrap .file_box {
+    width:220px;
+
+}
+.join_wrap .file_input {
+    display: none;
+}
+
+.file_btn {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.file_btn:hover {
+    background: #f5f5f5;
+}
+
+.file_name {
+    display: inline-block;
+    max-width: 220px;
+    margin-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+}
+/* ------------ join_View end */
+/* itemDetail ------------------------------------------  */
+.detWrap {
+    margin: 0 auto;
+    width: 1180px;
+}
+.detCon {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+.buy_option_wrap {
+}
+
+
+.detLabel input[type="radio"] {
+    /*font-size: 14px;*/
+    /*color:red;*/
+
+}
+
+.detLabel .title {
+    /*font-size: 14px;*/
+    /*color:red;*/
+}
+
+.detLabel {
+    /*border-bottom: 1px solid #ccc;*/
+    width: 420px;
+    /*display: inline-flex;*/
+    /*align-items: flex-start;*/
+    /*gap: 4px;*/
+}
+
+
+.buy_option_wrap .buy_type,
+.buy_option_wrap .buy_option_box {
+}
+
+.detInfo {
+    color:#5c5c5c;
+    width: 420px;
+    height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detInfo .input_date {
+    border-radius: 5px;
+    border:1px solid #ccc;
+    width: 160px;
+    height: 32px;
+    padding-left: 10px;
+}
+
+.buy_option:first-child {
+    padding-top: 10px;
+}
+
+
+.buy_option .title,
+.detInfo .title {
+    width: 160px;
+    color:#5c5c5c;
+}
+
+.buy_option .data,
+.detInfo .data {
+    width: 160px;
+    color:#000;
+}
+
+.buy_option .data {
+    font-size: 16px;
+    font-weight: 500;
+
+}
+
+.detBox1-1 {
+    width: 320px;
+    margin-right: 100px;
+}
+.detBox1-1 .thum {
+    border-radius: 5px;
+    width: 320px;
+    height: 380px;
+    object-fit: cover;
+}
+
+.buy_option .counter,
+.detInfo .counter{
+    display: flex;
+    width: 100px;
+    height: 24px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: 14px;
+}
+.detInfo .counter i{
+    color:#000;
+}
+/*.detBox1-2 {*/
+/*    border:1px solid red;*/
+/*    width: 520px;*/
+/*}*/
+
+.detBox1-2 .detCol .canvas_wrap {
+    width: 480px;
+    height: 60px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+}
+
+.canvas_wrap .canvas_box {
+    width:100px;
+    height: 40px;
+    position: relative;
+
+}
+
+.canvas_wrap .canvas_box .line{
+    position: absolute;
+    top:0;
+    left:0;
+
+}
+
+.canvas_box.active .subtab {
+    color: green;
+    font-weight: 500;
+}
+
+.canvas_wrap .canvas_box .subtab{
+    position: absolute;
+    top:14px;
+    left:14px;
+}
+
+.detBox1-2 .detCol  {
+    width: 420px;
+    height: auto;
+    color:#7c7c7c;
+}
+.detBox1-2 .detCol .hn_name{
+    font-size: 18px;
+    color:#000;
+    height: 40px;
+    line-height: 40px;
+    /*vertical-align: middle;*/
+}
+/*.detCol .hn_nameBox {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*}*/
+
+.detBox1-2 .priceBox,
+.detPrice .priceBox1,
+.detCol .priceBox1 {
+    /*margin: 10px 0;*/
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.detCol .t_option_box {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.detCol .t_option_box .slash {
+    margin: 0 10px;
+}
+
+
+.detPrice .price,
+.detCol .price {
+    font-size: 22px;
+    font-weight: 600;
+    color:#000;
+    margin-right: 10px;
+}
+
+.detBox1-2 .priceBox .unit,
+.detPrice .won,
+.detCol .won {
+    font-size: 16px;
+}
+.detCol .nation {
+    font-size: 16px;
+    color:#000;
+}
+
+.hn_nameBox .shareBox{
+    border:1px solid #ccc;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.hn_nameBox .shareBox i{
+    font-size: 16px;
+    color:#ccc;
+}
+
+
+.detCon .detPrice {
+    margin-bottom: 10px;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.detCon .detPrice .price {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.detBuy {
+    width: 420px;
+    gap:10px;
+}
+
+.detBuy .btnType32,
+.detBuy .btnType4 {
+    width: 50%;
+    height: 40px;
+    font-size: 16px;
+}
+
+.detBox2-1 {
+    margin:20px 0;
+    width: 1180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.detBox2-1 .menutab {
+    width: 25%;
+    height: 40px;
+    line-height: 40px;
+    border:1px solid #ececec;
+    background-color: #ececec41;
+    color:#5c5c5c;
+    text-align: center;
+    font-size: 14px;
+}
+.detCon1-2 {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.detCon1-2 .detBox2-2 {
+    margin-top: 0;
+    width: 950px;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.detCon1-2 .detBox2-2 img {
+    /*border:1px solid #ccc;*/
+    border-radius: 3px;
+    width: 420px;
+    height: 520px;
+    object-fit: cover;
+}
+
+.detCon1-2 .detBox2-2 > *{
+    margin: 0 auto;
+}
+
+.detBox2-3 .infoMsg {
+    /*margin: 0 aƒvuto;*/
+    text-align: center;
+    font-size: 16px;
+    padding: 20px 0;
+}
+
+.detBox2-3 .detInfoTable {
+    /*border:1px solid red;*/
+    width: 780px;
+    text-align: center;
+    /*height: 220px;*/
+    border-collapse: collapse;
+    margin-bottom: 40px;
+}
+.detBox2-3 .detInfoTable td {
+    border-bottom:1px solid #ececec;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+.detBox2-3 .detInfoTable .col1,
+.detBox2-3 .detInfoTable .col2 {
+    width: 20%;
+    background-color: var(--bg-color1);
+}
+
+
+.detBox2-3 .detInfoTable .col3 {
+    width: 30%;
+}
+
+
+
+@media screen and (min-width: 2560px) {
+
+    main,
+    .merregister {
+        min-height: 1080px;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    /* login_View start  -------------------------------- */
+    main,
+    .merregister {
+        min-height: 580px;
+        height: auto;
+    }
+
+    .login {
+        height: 450px;
+
+    }
+
+    .login > p {
+        margin: 20px 0;
+
+    }
+
+/* login_View end  -------------------------------- */
+/* orderListMaster_View start  -------------------------------- */
+/* orderListMaster_View end  -------------------------------- */
+/* pop_Price_View srart  -------------------------------- */
+    .buy_item_conkol > .area2 {
+        width: 920px;
+        height: 320px;
+        margin: 0 20px;
+        border-radius: 5px;
+        overflow: hidden;
+        /*border:1px solid red;*/
+    }
+
+    .buy_item_conkol > .area2 > .match_box101 {
+        width: 340px;
+        height: 320px;
+        border-radius: 10px;
+        margin-right: 10px;
+
+    }
+
+    .buy_item_conkol > .area2 > .match_box102 {
+        /*width: 100%;*/
+        width: 570px;
+        height: 320px;
+        border-radius: 10px;
+        overflow: hidden;
+
+    }
+
+    .buy_item_conkol > .area2 .match_box1011 {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        width: 338px;
+        height: 280px;
+        overflow: hidden;
+    }
+
+    .buy_item_conkol > .area2 .match_box1021 {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        width: 568px;
+        height: 280px;
+        overflow: hidden;
+    }
+
+
+
+    .buy_item_conkol > .area2 .buy_item_tbl {
+        border-collapse: collapse;
+        width: auto;
+        height: 280px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        border-radius: 10px;
+    }
+
+
+    .buy_item_conkol .area2 .buy_box .cal_box,
+    .buy_item_conkol .area2 .buy_box .price_box {
+        width: 160px;
+        padding-right: 10px;
+    }
+
+
+    .buy_item_conkol > .area3 .search_box .input_type {
+        width: 340px;
+        height: 30px;
+        text-wrap: nowrap;
+    }
+
+    .buy_item_conkol > .area3 .search_box .searched_box.area1 {
+        height: 340px;
+
+    }
+    .buy_item_conkol > .area3 .search_box .btn_primary {
+        height: 30px;
+        text-wrap: nowrap;
+
+    }
+
+
+    /* pop_Price_View end  -------------------------------- */
+}

@@ -1,0 +1,1789 @@
+$(document).ready(function () {
+
+    $(function () {
+        setTopMenuHighlight();
+    });
+
+
+    $('#btnHSearch').on('click',function(){
+        const skey = $('#h_sKey').val();
+        if(skey==''){
+            Make_Toast('검색어를 입력하세요.');
+            $('#h_sKey').focus();
+            return;
+        }
+        Search_Product(skey);
+    });
+
+    $("#h_sKey").on("keypress", function (key) {
+        if (key.keyCode == 13) {
+            const skey = $('#h_sKey').val();
+            if(skey==''){
+                Make_Toast('검색어를 입력하세요.');
+                $('#h_sKey').focus();
+                return;
+            }
+            Search_Product(skey);
+        }
+    });
+
+    // $(function () {
+    //     $('.gnb_area').on('mouseenter', '.top_gnb_ul > li', function () {
+    //         $('.sub_menu_wrap')
+    //             .stop(true, true)
+    //             .slideDown(200);
+    //     });
+    //
+    //     $('.gnb_area').on('mouseleave', function () {
+    //         $('.sub_menu_wrap')
+    //             .stop(true, true)
+    //             .slideUp(200);
+    //     });
+    // });
+    $(function () {
+        $('.hbox1-3 .top_gnb_ul > li').on('mouseenter', function () {
+            $('.hbox1-3 .sub_menu_wrap').addClass('active');
+        });
+
+        $('.hbox1-3').on('mouseleave', function () {
+            $('.hbox1-3 .sub_menu_wrap').removeClass('active');
+        });
+    });
+
+});
+
+function setTopMenuHighlight() {
+    var path = (window.location.pathname + window.location.search).toLowerCase();
+
+    console.log('current path:', path);
+
+    $('.top_gnb_ul .top_menu').removeClass('highlight');
+
+    if (path.indexOf('dashboard') > -1) {
+        $('.top_gnb_ul .top_menu.down_1').addClass('highlight');
+
+    } else if (
+        path.indexOf('smartorder') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_2').addClass('highlight');
+
+    } else if (
+        path.indexOf('mainherblist') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_3').addClass('highlight');
+
+    } else if (
+        path.indexOf('orderlist') > -1 ||
+        path.indexOf('orderdetail') > -1 ||
+        path.indexOf('regularorder') > -1 ||
+        path.indexOf('burkorderform') > -1 ||
+        path.indexOf('shiplist') > -1 ||
+        path.indexOf('claimlist') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_6').addClass('highlight');
+
+    } else if (
+        path.indexOf('stock') > -1 ||
+        path.indexOf('herblist') > -1 ||
+        path.indexOf('herbreg') > -1 ||
+        path.indexOf('herbregall') > -1 ||
+        path.indexOf('herbmatch') > -1 ||
+        path.indexOf('prodlist') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_5').addClass('highlight');
+
+    } else if (
+        path.indexOf('materiallist') > -1 ||
+        path.indexOf('transactionlist') > -1 ||
+        path.indexOf('vendorlist') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_4').addClass('highlight');
+
+    } else if (
+        path.indexOf('calculate') > -1 ||
+        path.indexOf('settlement') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_5').addClass('highlight');
+
+    } else if (
+        path.indexOf('deliveryinfo') > -1 ||
+        path.indexOf('myinfo') > -1 ||
+        path.indexOf('mypage') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_6').addClass('highlight');
+    } else if (
+        path.indexOf('setprice') > -1
+    ) {
+        $('.top_gnb_ul .top_menu.down_7').addClass('highlight');
+    }
+}
+
+
+function Make_delcode(sn,typ=1){
+    let del = ['직배','퀵','경동','대신','로젠','롯데','천일','한진'];
+    let str = '';
+
+    if(typ==1) {
+        str = '<select name="delitype" id="delitype_' + sn + '" class="selectType2">';
+        str += '<option value="0">선택</option>';
+    }else{
+        str = '<option value="0">선택</option>';
+    }
+    for(let i=0;i<=(del.length-1);i++){
+        str += '<option value="' + (i+1) + '">' + del[i] + '</option>';
+    }
+
+    if(typ==1) {
+        str += '</select>';
+    }
+
+    return str;
+}
+
+function Make_delcode_str(sn){
+    let del = ['직배','퀵','경동','대신','로젠','롯데','천일','한진'];
+
+    str = del[(sn-1)];
+
+    return str;
+}
+
+
+function Search_Product(skey){
+    let url ='';
+    if(skey==''){
+        url = '/Product/mainHerbList';
+    }else{
+        url = '/Product/mainHerbList?hd=' + skey
+    }
+
+    $(location).attr("href", url);
+}
+
+function calcPricePerGeun(price,weight) {
+    let r_price = parseFloat(price) || 0;
+    let r_weight = parseFloat(weight) || 0;
+    let geun = 600;
+    let result = 0;
+
+    if (weight > 0) {
+        result = (r_price * r_weight) / geun;
+    }
+
+    return Math.round(result);
+}
+
+
+function Load_API(url,dataarr){
+    return new Promise(function(resolve, reject){
+        console.log('call api=' + url);
+        console.log(JSON.stringify(dataarr));
+        let retMap = new Map();
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType : "JSON",
+            data: dataarr,
+            success: function (response) {
+                retMap.set('status',response.result);
+                retMap.set('data',response.info);
+                retMap.set('message',response.message);
+                resolve(retMap);
+            },
+            error: function (request, status, error) {
+                retMap.set('status','error');
+                retMap.set('data','');
+                retMap.set('message',error);
+                reject(retMap);
+            }
+        });
+    });
+}
+
+function Load_API2(url,dataarr){
+    return new Promise(function(resolve, reject){
+        console.log('call api=' + url);
+        console.log(JSON.stringify(dataarr));
+        let retMap = new Map();
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: "application/json",
+            dataType : "JSON",
+            data: JSON.stringify(dataarr),
+            // data: dataarr,
+            success: function (response) {
+                retMap.set('status',response.result);
+                retMap.set('data',response.info);
+                retMap.set('message',response.message);
+                resolve(retMap);
+            },
+            error: function (request, status, error) {
+                retMap.set('status','error');
+                retMap.set('data','');
+                retMap.set('message',error);
+                reject(retMap);
+            }
+
+        });
+    });
+}
+
+function Load_API_Form(url,f_data){
+    return new Promise(function(resolve, reject){
+        console.log('call form api=' + url);
+        let retMap = new Map();
+        $.ajax({
+            url: url,
+            type : 'POST',
+            data: f_data,
+            dataType: "JSON",
+            cache : false,
+            processData : false,
+            contentType : false,
+            success: function (response) {
+                retMap.set('status',response.result);
+                retMap.set('data',response.info);
+                retMap.set('message',response.message);
+                resolve(retMap);
+            },
+            error: function (request, status, error) {
+                retMap.set('status','error');
+                retMap.set('data','');
+                retMap.set('message',error);
+                reject(retMap);
+            }
+        });
+    });
+}
+
+function Load_API_File(url,f_data){
+    return new Promise(function(resolve, reject){
+        console.log('call file api=' + url);
+        console.log(f_data);
+        let retMap = new Map();
+        $.ajax({
+            url: url,
+            type : 'POST',
+            data: f_data,
+            enctype		: 'multipart/form-data',
+            processData : false,
+            contentType : false,
+            success: function (response) {
+                retMap.set('status',response.result);
+                retMap.set('data',response.info);
+                retMap.set('message',response.message);
+                resolve(retMap);
+            },
+            error: function (request, status, error) {
+                retMap.set('status','error');
+                retMap.set('data','');
+                retMap.set('message',error);
+                reject(retMap);
+            }
+        });
+    });
+}
+
+function Return_Step_Name(step){
+    let val = parseInt(step,10);
+    switch(val){
+        case 1: return "취소";
+        case 2: return "전체반품";
+        case 3: return "부분반품";
+        case 4: return "전체교환";
+        case 5: return "부분교환";
+        default: return '';
+    }
+}
+function Order_Step_Name(step){
+    let val = parseInt(step,10);
+    switch(val){
+        case 1: return "미확인";
+        case 2: return "제품준비중";
+        case 3: return "배송준비중";
+        case 4: return "배송중";
+        case 5: return "배송완료";
+        case 6: return "주문취소";
+        case 7: return "반품진행중";
+        case 8: return "반품완료";
+        case 9: return "교환진행중";
+        case 10: return "교환완료";
+        default: return '';
+    }
+}
+
+function Order_Type_Name(step) {
+    let val = parseInt(step,10);
+    switch(val){
+        case 1: return "일반";
+        case 2: return "정기";
+        case 3: return "대량";
+        default: return '';
+    }
+}
+
+function Package_Step_Name(step) {
+    let val = parseInt(step,10);
+    switch(val){
+        case 1: return "미확인";
+        case 2: return "출고준비";
+        case 3: return "출고시작";
+        case 4: return "출고시작";
+        default: return '';
+    }
+}
+
+
+function Make_Toast(msg){
+    // const div = document.createElement('div');
+    // div.classList.add('toastBox');
+    // div.innerHTML = msg.replace(/\n/g, '<br>');  // \n을 <br>로 바꿈
+    // document.body.appendChild(div);
+    //
+    // setTimeout(() => {
+    //     div.remove();
+    // }, 1500);
+    const formattedMsg = msg.replace(/\\n/g, '\n');
+    alert(formattedMsg);
+}
+
+
+function Make_Alert(msg){
+    const formattedMsg = msg.replace(/\\n/g, '\n');
+    alert(formattedMsg);
+
+}
+function Make_Toast_URL(msg,URL){
+    const div = document.createElement('div');
+    div.classList.add('toastBox');
+    div.innerHTML = msg.replace(/\n/g, '<br>');  // \n을 <br>로 바꿈
+    document.body.appendChild(div);
+
+    setTimeout(() => {
+        $(location).attr('href',URL);
+    }, 800);
+}
+
+
+function checkValidDate(value) {
+    var result = true;
+    try {
+        var date = value.split("-");
+        var y = parseInt(date[0], 10),
+            m = parseInt(date[1], 10),
+            d = parseInt(date[2], 10);
+
+        var dateRegex = /^(?=\d)(?:(?:31(?!.(?:0?[2469]|11))|(?:30|29)(?!.0?2)|29(?=.0?2.(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(?:\x20|$))|(?:2[0-8]|1\d|0?[1-9]))([-.\/])(?:1[012]|0?[1-9])\1(?:1[6-9]|[2-9]\d)?\d\d(?:(?=\x20\d)\x20|$))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\x20[AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+        result = dateRegex.test(d+'-'+m+'-'+y);
+    } catch (err) {
+        result = false;
+    }
+    return result;
+}
+
+function div_close(id,reload){
+    if(reload==1){
+        location.reload();
+    }
+    $('#' + id).hide();
+
+}
+
+function go_BigOrder(){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Mypage/burkOrderForm";
+        $(location).attr("href", url);
+    }
+}
+
+function go_RegularOrder() {
+    let uid = $('#tUid').val();
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        url = "/Mypage/regularOrder";
+        $(location).attr("href", url);
+    }
+}
+
+
+
+function go_main() {
+    var url = "/";
+    $(location).attr("href", url);
+}
+
+
+// function go_detail(hncode,ptype){
+//     let uid = $('#tUid').val();
+//     if(uid==''){
+//         url = '/Member/Login';
+//         $(location).attr("href", url);
+//     } else{
+//         url = "/Product/itemDetail?hd=" + hncode + '&pt=' + ptype;
+//         $(location).attr("href", url);
+//     }
+// }
+
+function go_productList(typ) {
+    let url = '';
+    let uid = $('#tUid').val();
+    let sKey = $('#h_sKey').val();
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        if (typ == '') {
+            url = "/Product/pList";
+        } else {
+            url = "/Product/pList?lp=" + typ + "&skey=" + sKey;
+        }
+    }
+    $(location).attr("href", url);
+}
+
+
+
+function g_close(){
+    self.close();
+}
+function go_cart() {
+    var url = ORDERURL + "/Cart";
+    $(location).attr("href", url);
+}
+
+function go_smart() {
+    var url = DECOCURL + "/SmartOrder";
+    $(location).attr("href", url);
+}
+
+function go_logout(){
+    var url = "/Logout";
+    $(location).attr("href", url);
+}
+
+function go_login(){
+    var url = "/Member/Login";
+    $(location).attr("href", url);
+}
+
+function go_join(){
+    var url = "/Member/Join";
+    $(location).attr("href", url);
+}
+
+function go_detail(hncode,ptype){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Product/itemDetail?hd=" + hncode + '&pt=' + ptype;
+        $(location).attr("href", url);
+    }
+}
+
+function go_delInfo() {
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/deliveryInfo";
+        $(location).attr("href", url);
+    }
+    // var url = DECOCURL + "/deliveryInfo";
+    // $(location).attr("href", url);
+}
+
+function go_prdBarcode() {
+    var url = PHARMURL + "/settings/prdBarcode";
+    $(location).attr("href", url);
+}
+
+function pop_Maching() {
+    var url = "/Order/SmartOrder";
+    $(location).attr("href", url);
+}
+
+function pop_Maching2() {
+    var url = "/Order/SmartOrder";
+    $(location).attr("href", url);
+}
+
+function do_refresh() {
+    location.reload();
+}
+
+function top_secret() {
+    // var url = "/Order/Cart";
+    // $(location).attr("href", url);
+    $('#accPopCon').toggle();
+}
+
+
+// board ---------------
+
+function go_Board_Notice(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Board/bList?bid=1";
+        $(location).attr("href", url);
+    }
+}
+
+function go_Board_Form(bid) {
+    let uid = $('#tUid').val();
+
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+         url = "/Board/boardForm?bid=" + bid;
+         $(location).attr("href", url);
+    }
+}
+
+function go_Board_editForm(bid,bcode,uid) {
+    let mitype = $('#title').data('mitype');
+    let tUid = $('#tUid').val();
+
+    if (tUid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else if (tUid == uid || mitype == 'master') {
+        url = "/Board/editForm?bid=" + bid +"&bcode="+bcode;
+        $(location).attr("href", url);
+    } else {
+        url = "/Board/bList?bid=" + bid ;
+        $(location).attr("href", url);
+    }
+}
+
+function go_replyForm(bid,bcode) {
+    let mitype = $('#title').data('mitype');
+    let tUid = $('#tUid').val();
+    let p_uid = $('#p_uid').val();
+    // console.log(bid);
+
+    if (tUid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else if (mitype == 'master'){
+        url = "/Board/replyForm?bid=" + bid +"&bcode="+bcode;
+        $(location).attr("href", url);
+        Load_BContent_Reply();
+    } else {
+        url = "/Board/bList?bid=" + bid ;
+        $(location).attr("href", url);
+    }
+}
+
+function go_InqForm(bid,bcode) {
+    let uid = $('#tUid').val();
+    //let bid = $('#title').data('bid');
+    // console.log(bid);
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        url = "/Board/InqForm?bid=" + bid + '&bcode=' + bcode;
+        $(location).attr("href", url);
+    }
+}
+
+function go_Board_Notice_Form(){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Board/notice_Form";
+        $(location).attr("href", url);
+    }
+}
+
+function go_Board_Faq(){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Board/bList?bid=2";
+        $(location).attr("href", url);
+    }
+}
+
+function go_Board_Inquiry(){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Board/bList?bid=3";
+        $(location).attr("href", url);
+    }
+}
+
+function go_Board_Inquiry_Form(){
+    let uid = $('#tUid').val();
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        url = "/Board/inquiry/form" ;
+        $(location).attr("href", url);
+    }
+}
+
+function g_GetLoginCookie() {
+    var readCookie = $.cookie("djmedi_returl");
+    var returl = "";
+    if (readCookie == "" || readCookie == undefined) {
+        returl = "";
+    } else {
+        $.removeCookie("djmedi_returl", { path: "/" });
+        returl = readCookie;
+    }
+    return returl;
+}
+
+function g_SetLogin(url) {
+    $.cookie("djmedi_returl", url, {
+        expires: 1,
+        path: "/",
+    });
+    $(location).attr("href", url);
+}
+
+
+// refund & exchange---------------
+
+function go_InqForm(hncode) {
+    let uid = $('#tUid').val();
+    //let bid = $('#title').data('bid');
+    // console.log(bid);
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        url = "/Board/InqForm?bid=" + bid + '&bcode=' + bcode;
+        $(location).attr("href", url);
+    }
+}
+
+
+function go_claimList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/claimList";
+        $(location).attr("href", url);
+    }
+}
+
+
+function go_claim(hncode){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/claim?hncode=" + hncode;
+        // url = tUrl + "/claim";
+        $(location).attr("href", url);
+    }
+}
+
+function go_reOrder(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/reOrder";
+        // url = tUrl + "/claim";
+        $(location).attr("href", url);
+    }
+}
+
+// mypage ---------------
+function go_mypage(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        tUrl = $('#tUrl').val();
+        $(location).attr("href", tUrl);
+    }
+}
+
+function go_materialList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/materialList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_materialLog(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/materialLog";
+        $(location).attr("href", url);
+    }
+}
+
+function go_tradeMaterialList(vcode = '') {
+    let uid = $('#tUid').val();
+    let url = '';
+    let tUrl = $('#tUrl').val();
+
+    if (uid == '') {
+        url = '/Member/Login';
+
+    } else if (vcode != '') {
+        url = tUrl + '/tradeMaterialList?cd=' + vcode;
+
+    } else {
+        url = tUrl + '/tradeMaterialList';
+    }
+
+    $(location).attr('href', url);
+}
+
+function go_tradeMedicineList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/tradeMedicineList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_tradeMedicineList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/tradeMedicineList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_vendorList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/vendorList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_customerList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/customerList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_prodList(hncode){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/prodList?cd=" + hncode;
+        $(location).attr("href", url);
+    }
+}
+
+function go_medicineLog(hncode){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/medicineLog?cd=" + hncode;
+        $(location).attr("href", url);
+    }
+}
+
+function go_herbList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_herbMatch(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbMatch";
+        $(location).attr("href", url);
+    }
+}
+
+function go_orderList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/orderList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_setPrice(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/setprice";
+        $(location).attr("href", url);
+    }
+}
+
+function go_memberList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/memberlist";
+        $(location).attr("href", url);
+    }
+}
+
+function go_shipList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/shipList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_stock(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/stockListDecoc";
+        $(location).attr("href", url);
+    }
+}
+
+function go_deliveryList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/deliveryList";
+        $(location).attr("href", url);
+    }
+}
+
+function go_putList(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/putList";
+        $(location).attr("href", url);
+    }
+}
+
+
+
+
+
+function go_burkOrderForm(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/burkOrderForm";
+        $(location).attr("href", url);
+    }
+}
+
+
+function go_herbReg(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbReg";
+        $(location).attr("href", url);
+    }
+}
+
+function go_herbReg_settingData(hncode){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbReg?rc=" + hncode;
+        $(location).attr("href", url);
+    }
+}
+
+function go_herbRegAll(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbRegAll";
+        $(location).attr("href", url);
+    }
+}
+
+function go_burkOrder(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/burkOrder";
+        $(location).attr("href", url);
+    }
+}
+
+
+function go_herbModifier(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/herbModifier";
+        $(location).attr("href", url);
+    }
+}
+
+
+function formatDate(d) {
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+}
+
+function go_dashBoard(){
+    let uid = $('#tUid').val();
+    let url = '';
+    if(uid==''){
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    }else{
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/dashBoard";
+        $(location).attr("href", url);
+    }
+}
+
+
+function Join_attr_string(arr, sep){
+    return arr.filter(e => e).join(sep);
+}
+
+
+function number_format(num){
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+
+function start_spinner() {
+    $('#spinnerBox').addClass('active');
+    $('#spinner').addClass('active');
+
+}
+
+function stop_spinner(){
+    $('#spinnerBox').removeClass('active');
+    $('#spinner').removeClass('active');
+}
+
+function add_wishlist(e){
+    $(e).toggleClass('active');
+
+    const iconBox = $(e).find('.wishHeartBox');
+    const icon = $(e).find('.wishHeart');
+    if(icon.hasClass('fa-regular')){
+        iconBox.addClass('.wishHeartBox');
+        iconBox.removeClass('active');
+        icon.removeClass('fa-regular')
+            .addClass('fa-solid wishHeart active');
+    } else {
+        iconBox.addClass('active');
+        icon.removeClass('fa-solid active')
+            .addClass('fa-regular wishHeart');
+    }
+    // $(e).find('.wishHeart').toggleClass('active');
+    console.log("hello1201");
+
+    // const icon = $(e).find('.wishHeart');
+    // if(icon.hasClass('fa-regular')){
+    //     icon.removeClass('fa-regular heart1-1 wishHeart')
+    //         .addClass('fa-solid heart1-2');
+    // } else {
+    //     icon.removeClass('fa-solid heart1-2')
+    //         .addClass('fa-regular fa-heart heart1-1 wishHeart');
+    // }
+
+    console.log("hello1201");
+}
+
+function printWindow(id) {
+    var printContent = document.getElementById(id).innerHTML;
+    var printWindow = window.open('', '', 'width=800,height=600,padding=10');
+    printWindow.document.write('<html><head><title>Print</title>');
+    var rnd = Math.floor(Math.random() * 10000);
+    var cssstr = "<link rel='stylesheet' href='/assets/web/css/style.css?rnd=" + rnd + "' />";
+    printWindow.document.write(cssstr);
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(printContent);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+
+    setTimeout(function () {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }, 1000);
+}
+
+function barcodePreview(code) {
+    let uid = $('#tUid').val();
+    let url = '';
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/settings/prdBarcodePreview?hn=" + code;
+        window.open(url, 'barcodePopup', 'width=360,height=560,resizable=yes,scrollbars=yes');
+    }
+}
+
+function prdBarcodePreview(code) {
+    let uid = $('#tUid').val();
+    let url = '';
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/settings/prdBarcodePreview?cd=" + code;
+        window.open(url, 'barcodePopup', 'width=360,height=560,resizable=yes,scrollbars=yes');
+    }
+}
+
+function statementPreview(code) {
+    let uid = $('#tUid').val();
+    let url = '';
+    if (uid == '') {
+        url = '/Member/Login';
+        $(location).attr("href", url);
+    } else {
+        let tUrl = $('#tUrl').val();
+        url = tUrl + "/settings/prdBarcodePreview?hn=" + code;
+        window.open(url, 'barcodePopup', 'width=800,height=1080,resizable=yes,scrollbars=yes');
+    }
+}
+
+
+
+function dataCopy(text) {
+    let textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // 화면 밖으로 위치 이동시키기
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "-9999px";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        document.execCommand('copy');
+        Make_Toast('복사완료');
+    } catch (err) {
+        Make_Toast('복사실패');
+        console.error('Fallback: 복사 실패', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+function concatWithDelimiter(base, val, delimiter) {
+    if(val === '') return base;
+    return base === '' ? val : base + delimiter + val;
+}
+
+function stopScroll(){
+    $('html, body').addClass('body-no-scroll');
+}
+
+function startScroll(){
+    $('html, body').removeClass('body-no-scroll');
+}
+
+function addDays(days = 0, dateStr = '') {
+    var date = (dateStr.trim() === '') ? new Date() : new Date(dateStr);
+    if (isNaN(date.getTime())) {
+        console.error("유효하지 않은 날짜 형식입니다.");
+        return null;
+    }
+    date.setDate(date.getDate() + parseInt(days, 10));
+    var offset = date.getTimezoneOffset() * 60000;
+    var result = new Date(date.getTime() - offset).toISOString().split("T")[0];
+    return result;
+}
+
+
+/**
+ * 현재 날짜(또는 일시)를 포맷팅된 문자열로 반환하는 함수
+ *
+ * @param {boolean} [includeTime=false] - 시간(시:분:초) 포함 여부 (기본값: false)
+ * @returns {string} includeTime이 false면 'YYYY-MM-DD', true면 'YYYY-MM-DD HH:mm:ss' 형식의 문자열
+ *
+ * @example
+ * fnToDay();     // '2026-09-09'
+ * fnToDay(true); // '2026-09-09 11:55:04'
+ */
+function fnToDay(includeTime = false) {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    let formattedDate = `${year}-${month}-${day}`;
+
+    if (includeTime) {
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+        const seconds = String(today.getSeconds()).padStart(2, '0');
+        formattedDate += ` ${hours}:${minutes}:${seconds}`;
+    }
+
+    return formattedDate;
+}
+
+
+/**
+ * 페이징 HTML을 생성하여 대상 요소에 삽입하는 함수
+ * @param {string} theme - 페이징 테마
+ * @param {object} params - {total, page, perpage, bname}
+ */
+function Make_Page_Html(theme, params) {
+    const total = parseInt(params.total || 0);
+    let nowpage = parseInt(params.page || 1);
+    const perPage = parseInt(params.perpage || 10);
+    const btnName = params.bname || 'btnLinkPaging';
+    const blockCount = 10;
+
+    if (total <= 0 || perPage <= 0) return '';
+
+    const totalPage = Math.ceil(total / perPage);
+    if (nowpage < 1) nowpage = 1;
+    if (nowpage > totalPage) nowpage = totalPage;
+
+    const startPage = Math.floor((nowpage - 1) / blockCount) * blockCount + 1;
+    const endPage = Math.min(startPage + blockCount - 1, totalPage);
+    let html = '';
+
+    // 화살표 전용 인라인 스타일 (폭 최소화 및 여백 제거)
+    const arrowStyle = "style='min-width:auto; width:auto; padding:0 3px; border:none; background:transparent;'";
+
+    switch (theme) {
+        case 'simple':
+            html = `<div class='page_box flexType1'>`;
+
+            if (nowpage > 1) {
+                html += `
+                    <button type='button' class='page flexType1 page_arrow' ${arrowStyle} name='${btnName}' data-page='1' title="맨 처음">
+                        <i class="fa-solid fa-angles-left"></i>
+                    </button>
+                    <button type='button' class='page flexType1 page_arrow' ${arrowStyle} name='${btnName}' data-page='${nowpage - 1}' title="이전 페이지">
+                        <i class="fa-solid fa-angle-left"></i>
+                    </button>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = (i === nowpage) ? 'active' : '';
+                html += `<button type='button' class='page flexType1' name='${btnName}' data-page='${i}'><p class='page_p ${activeClass}'>${i}</p></button>`;
+            }
+
+            if (nowpage < totalPage) {
+                html += `
+                    <button type='button' class='page flexType1 page_arrow' ${arrowStyle} name='${btnName}' data-page='${nowpage + 1}' title="다음 페이지">
+                        <i class="fa-solid fa-angle-right"></i>
+                    </button>
+                    <button type='button' class='page flexType1 page_arrow' ${arrowStyle} name='${btnName}' data-page='${totalPage}' title="맨 끝">
+                        <i class="fa-solid fa-angles-right"></i>
+                    </button>`;
+            }
+
+            html += `</div>`;
+            break;
+
+        case 'mesform':
+            html = `<div class='page_box flexType1'>`;
+
+            if (nowpage > 1) {
+                html += `
+                    <button type='button' class='page page_arrow' ${arrowStyle} name='${btnName}' data-page='1' title="맨 처음">
+                        <i class="fa-solid fa-angles-left"></i>
+                    </button>
+                    <button type='button' class='page page_arrow' ${arrowStyle} name='${btnName}' data-page='${nowpage - 1}' title="이전 페이지">
+                        <i class="fa-solid fa-angle-left"></i>
+                    </button>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = (i === nowpage) ? 'active' : '';
+                html += `<button type='button' class='page ${activeClass}' name='${btnName}' data-page='${i}'>${i}</button>`;
+            }
+
+            if (nowpage < totalPage) {
+                html += `
+                    <button type='button' class='page page_arrow' ${arrowStyle} name='${btnName}' data-page='${nowpage + 1}' title="다음 페이지">
+                        <i class="fa-solid fa-angle-right"></i>
+                    </button>
+                    <button type='button' class='page page_arrow' ${arrowStyle} name='${btnName}' data-page='${totalPage}' title="맨 끝">
+                        <i class="fa-solid fa-angles-right"></i>
+                    </button>`;
+            }
+
+            html += `</div>`;
+            break;
+    }
+
+    return html;
+}
+
+/**
+ * 팝업창
+ * @param {string} url - 이동할 페이지 URL
+ * @param {number|string} [width=1200] - 팝업창 너비 (기본값: 1200)
+ * @param {number|string} [height=800] - 팝업창 높이 (기본값: 800)
+ * @param {string} [name='popupWindow'] - 팝업창 이름/타겟 (기본값: 'popupWindow')
+ */
+function openPopup(url, width = 1200, height = 800, name = 'popupWindow') {
+    const features = `width=${width},height=${height},status=0,titlebar=0,scrollbars=1,resizable=1`;
+    return window.open(url, name, features);
+}
+/**
+ * 무게단위포함 리턴
+ * @param {number} grams - 무게
+ * @param {number|string} [precision] - 소숫점 갯수
+ */
+function formatWeight(grams, precision = 2) {
+    let value = parseFloat(grams);
+    if (isNaN(value)) return '0g';
+
+    const absValue = Math.abs(value);
+    let unit = 'g';
+
+    if (absValue >= 1000000) {
+        value = value / 1000000;
+        unit = 't';
+    } else if (absValue >= 1000) {
+        value = value / 1000;
+        unit = 'kg';
+    }
+
+    return Number(value.toFixed(precision)) + unit;
+}
+
+/**
+ * 입력된 적정재고량과 단위를 받아 g(그램) 기준으로 환산하는 함수
+ * @param {number|string} stock - 입력받은 재고 수량
+ * @param {string} unit - 선택된 단위 코드 ("1": g, "2": kg, "3": t)
+ * @returns {number|null} g으로 환산된 숫자 (유효하지 않은 입력 시 null)
+ */
+function formatWeightConvert(stock, unit) {
+    const numericStock = parseFloat(stock);
+
+    if (isNaN(numericStock) || numericStock < 0) {
+        return 0;
+    }
+    let grams = 0;
+    switch (String(unit)) {
+        case '1': // g
+            grams = numericStock;
+            break;
+        case '2': // kg -> g (x 1,000)
+            grams = numericStock * 1000;
+            break;
+        case '3': // t -> g (x 1,000,000)
+            grams = numericStock * 1000000;
+            break;
+        default:
+            grams = numericStock;
+    }
+    return Math.round(grams * 10000) / 10000;
+}
+
+/**
+ * 무게(g)를 입력받아 적절한 단위(g, kg, t)로 변환
+ * @param {number|string} grams - g 단위의 무게 값
+ * @returns {{ value: string, unit: string, formatted: string }}
+ */
+function formatWeightConvertForUnit(grams) {
+    let gram = parseFloat(grams);
+    let value = 0;
+    let unit = '';
+    if (isNaN(gram) || gram < 0) {
+        return { value: "0", unit: "g", formatted: "0g" };
+    }
+    if (gram >= 1000000) {
+        value = gram / 1000000;
+        unit = "t";
+    } else if (gram >= 1000) {
+        value = gram / 1000;
+        unit = "kg";
+    }else{
+        value = gram;
+        unit = "g"
+    }
+    var formattedValue = Number(value.toFixed(2)).toLocaleString();
+    return {
+        value: formattedValue,
+        unit: unit,            //
+        formatted: formattedValue + unit
+    };
+}
+
+/**
+ * 원재료 입고 사유 String
+ * @param {number|string} reason - 입력받은 재고 수량
+ * @returns {string}
+ */
+function Material_InStock_Reason(reason){
+    let val = parseInt(reason,10);
+    switch(val){
+        case 1: return "구매";
+        case 2: return "반품";
+        case 3: return "교환";
+        case 4: return "기타";
+        default: return '기타';
+    }
+}
+
+
+/**
+ * 원재료 입고 사유 Option
+ * @returns {string}
+ */
+function Material_InStock_Reason_Html(){
+    const defaultOption = '<option value="">선택하세요.</option>';
+    const optionsHtml = [1, 2, 3, 4]
+        .map(val => `<option value="${val}">${Material_InStock_Reason(val)}</option>`)
+        .join('');
+    return defaultOption + optionsHtml;
+}
+
+/**
+ * 원재료 출고 사유 String
+ * @param {number|string} reason - 입력받은 재고 수량
+ * @returns {string}
+ */
+function Material_OutStock_Reason(reason){
+    let val = parseInt(reason,10);
+    switch(val){
+        case 1: return "판매";
+        case 2: return "생산";
+        case 3: return "출고";
+        case 4: return "불량";
+        case 5: return "폐기";
+        case 6: return "기타";
+        default: return '생산';
+    }
+}
+
+/**
+ * 원재료  출고 사유 Option
+ * @returns {string}
+ */
+function Material_OutStock_Reason_Html(){
+    const defaultOption = '<option value="">선택하세요.</option>';
+    const optionsHtml = [1, 2, 3, 4,5,6]
+        .map(val => `<option value="${val}">${Material_OutStock_Reason(val)}</option>`)
+        .join('');
+    return defaultOption + optionsHtml;
+}
+
+
+
+/**
+ * 약재 입고 사유 String
+ * @param {number|string} reason - 입력받은 재고 수량
+ * @returns {string}
+ */
+function Medicine_InStock_Reason(reason){
+    let val = parseInt(reason,10);
+    switch(val){
+        case 1: return "구매";
+        case 2: return "생산";
+        case 3: return "반품";
+        case 4: return "교환";
+        case 5: return "기타";
+        default: return '생산';
+    }
+}
+
+/**
+ * 약재 입고 사유 Option
+ * @returns {string}
+ */
+function Medicine_InStock_Reason_Html(){
+    const defaultOption = '<option value="">선택하세요.</option>';
+    const optionsHtml = [1, 2, 3, 4,5]
+        .map(val => `<option value="${val}">${Medicine_InStock_Reason(val)}</option>`)
+        .join('');
+    return defaultOption + optionsHtml;
+}
+
+
+/**
+ * 약재 출고 사유 String
+ * @param {number|string} reason - 입력받은 재고  Type
+ * @returns {string}
+ */
+function Medicine_OutStock_Reason(reason){
+    let val = parseInt(reason,10);
+    switch(val){
+        case 1: return "판매";
+        case 2: return "출고";
+        case 3: return "불량";
+        case 4: return "폐기";
+        case 5: return "기타";
+        default: return '출고';
+    }
+}
+
+/**
+ * 약재 출고 사유 Option
+ * @returns {string}
+ */
+function Medicine_OutStock_Reason_Html(){
+    const defaultOption = '<option value="">선택하세요.</option>';
+    const optionsHtml = [1, 2, 3, 4,5]
+        .map(val => `<option value="${val}">${Medicine_OutStock_Reason(val)}</option>`)
+        .join('');
+    return defaultOption + optionsHtml;
+}
+
+
+/**
+ * 원래 가격과 변동률(%)을 받아 최종 조정 금액을 반환
+ * - rate > 0 : 인상(할증)
+ * - rate === 0: 원래 가격
+ * - rate < 0 : 할인(인하)
+ * @param {number|string} price - 원래 가격 (예: 10000, "10,000")
+ * @param {number|string} rate - 변동률 (%) (예: 10, 0, -20)
+ * @returns {number} 최종 금액
+ */
+ function getDiscountPrice(price, rate) {
+    const p = parseFloat(String(price).replace(/[^0-9.-]/g, '')) || 0;
+    const r = parseFloat(String(rate).replace(/[^0-9.-]/g, '')) || 0;
+
+    if (r === 0) {
+        return p;
+    }
+
+    return Math.floor(p * (1 + r / 100));
+}
+
+/**
+ * 총 무게(g)와 1근(600g) 가격을 받아 총 가격을 계산
+ * @param {number|string} totalWeight - 총 무게(g) (예: 1200, "1,200g")
+ * @param {number|string} pricePerGeun - 1근(600g)당 가격 (예: 15000, "15,000")
+ * @returns {number} 계산된 총 가격
+ */
+function calculateTotalPriceByWeight(totalWeight, pricePerGeun) {
+    const weight = parseFloat(String(totalWeight).replace(/[^0-9.-]/g, '')) || 0;
+    const price = parseFloat(String(pricePerGeun).replace(/[^0-9.-]/g, '')) || 0;
+
+    if (weight <= 0 || price <= 0) return 0;
+
+    return Math.floor((weight / 600) * price);
+}
+
+/**
+ * 입력값의 유효성(빈 값 및 공백 여부)을 검증하고 실패 시 안내 메시지와 포커스를 처리하는 함수
+ *
+ * @param {string|number} value - 검증할 값
+ * @param {string} msg - 검증 실패 시 표시할 토스트 메시지
+ * @param {jQuery} [$focusTarget] - (선택) 검증 실패 시 포커스를 이동할 jQuery 요소 객체
+ * @returns {boolean} 값이 유효하면 true, 빈 값이면 false 반환
+ *
+ * @example
+ * if (!validate($('#m_skey').val(), '원재료명을 입력하세요.', $('#m_skey'))) return;
+ */
+function formValidate(value, msg, $focusTarget) {
+    if (!value || !$.trim(value)) {
+        Make_Toast(msg);
+        if ($focusTarget) $focusTarget.focus();
+        return false;
+    }
+    return true;
+}
+
+
+const Nav = {
+    getUid: function() {
+        return ($('#tUid').val() || '').trim();
+    },
+
+    getBaseUrl: function() {
+        return ($('#tUrl').val() || '').trim();
+    },
+
+    buildUrl: function(url, params = {}) {
+        if (!url) return '';
+        const queryString = new URLSearchParams(params).toString();
+        if (!queryString) return url;
+        return url.includes('?') ? `${url}&${queryString}` : `${url}?${queryString}`;
+    },
+
+    go: function(url, params = {}) {
+        if (!url) return;
+        location.href = this.buildUrl(url, params);
+    },
+
+    replace: function(url, params = {}) {
+        if (!url) return;
+        location.replace(this.buildUrl(url, params));
+    },
+
+    back: function() {
+        history.back();
+    },
+
+    /**
+     * 로그인 체크 및 Base URL 연동이 포함된 범용 이동 메서드
+     * @param {string} path - 이동할 경로 (예: '/medicineLog', '/Member/Join')
+     * @param {object} [params={}] - 쿼리스트링 파라미터 (예: { cd: hncode })
+     * @param {object} [options={}] - 설정 옵션
+     * @param {boolean} [options.requireAuth=false] - 로그인 체크 여부
+     * @param {boolean} [options.replace=false] - location.replace 사용 여부
+     */
+    move: function(path, params = {}, options = {}) {
+        const { requireAuth = false, replace = false } = options;
+
+        // 1. 로그인 여부 확인
+        if (requireAuth && !this.getUid()) {
+            if (typeof Make_Toast === 'function') {
+                Make_Toast('로그인이 필요한 서비스입니다.');
+            }
+            location.href = '/Member/Login';
+            return;
+        }
+
+        // 2. Base URL 결합 여부 판별
+        const targetUrl = `${this.getBaseUrl()}${path}`;
+
+        // 3. 최종 이동 처리
+        if (replace) {
+            this.replace(targetUrl, params);
+        } else {
+            this.go(targetUrl, params);
+        }
+    }
+};
+
+const DateUtil = {
+    /**
+     * 기간 키워드에 따른 시작일/종료일 계산
+     * @param {string} type - '오늘', '1개월', '3개월', '6개월', '전체' 또는 'today', '1m', '3m', '6m', 'all'
+     * @returns {{ sdate: string, edate: string }}
+     */
+    getPeriodRange: function(type) {
+        const today = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+
+        switch (type) {
+            case '오늘':
+            case 'today':
+                startDate = today;
+                endDate = today;
+                break;
+            case '1주일':
+            case '1w':
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - 7);
+                endDate = today;
+                break;
+            case '1개월':
+            case '1m':
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 1);
+                startDate.setDate(startDate.getDate() + 1);
+                endDate = today;
+                break;
+            case '3개월':
+            case '3m':
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 3);
+                startDate.setDate(startDate.getDate() + 1);
+                endDate = today;
+                break;
+            case '6개월':
+            case '6m':
+                startDate = new Date(today);
+                startDate.setMonth(today.getMonth() - 6);
+                startDate.setDate(startDate.getDate() + 1);
+                endDate = today;
+                break;
+            case '전체':
+            case 'all':
+                return { sdate: '', edate: '' };
+            default:
+                startDate = today;
+                endDate = today;
+        }
+
+        return {
+            sdate: formatDate(startDate),
+            edate: formatDate(endDate)
+        };
+    },
+
+    /**
+     * 기간 버튼 클릭 이벤트 공통 바인더
+     * @param {object} options
+     * @param {jQuery} options.$buttons - 기간 버튼 셀렉터 (예: $('.period'))
+     * @param {jQuery} options.$sdate - 시작일 input
+     * @param {jQuery} options.$edate - 종료일 input
+     * @param {function} [options.onSelect] - 날짜 설정 후 실행할 콜백 함수 (예: loadList)
+     */
+    bindPeriodButtons: function(options) {
+        const { $buttons, $sdate, $edate, onSelect } = options;
+
+        $buttons.on('click', function(e) {
+            e.preventDefault();
+            $buttons.removeClass('active');
+            $(this).addClass('active');
+
+            // data-period 속성이 있으면 우선 사용, 없으면 텍스트 사용
+            const periodType = $(this).data('period') || $(this).text().trim();
+            const range = DateUtil.getPeriodRange(periodType);
+
+            $sdate.val(range.sdate);
+            $edate.val(range.edate);
+
+            if (typeof onSelect === 'function') {
+                onSelect(range);
+            }
+        });
+    }
+};
+

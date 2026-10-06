@@ -1,0 +1,210 @@
+$(document).ready(function(){
+    MainFrame.init();
+
+    MainFrame.open();
+});
+
+
+
+const MainFrame = (()=>{
+    let el = null;
+    let self = null;
+
+    return {
+        $element: {},
+        vars : {
+            sorting1 : 1,
+            sorting2 : 1
+        },
+        init : function(){
+            this.$element = {
+                pList : $('#dataArea'),
+                pageArea : $('#pageArea'),
+                filters: $('#filter1, #filter2'),
+                filter1 : $('#filter1'),
+                filter2 : $('#filter2'),
+                totalRs : $('#totalRs')
+            };
+
+            el = this.$element;
+            self = this;
+            self.bindEvents();
+        },
+        bindEvents: function () {
+            el.filters.off('click').on('click', function (e) {
+                e.preventDefault();
+
+                let $clicked = $(this);
+                let $targetA = $clicked.children('a');
+                let $targetI = $clicked.children('i');
+
+                let selectedFilterType = ($clicked.attr('id') === 'filter1') ? 1 : 2;
+                let isSameFilter = (self.vars.sorting1 === selectedFilterType);
+
+                if (isSameFilter) {
+                    self.vars.sorting2 = (self.vars.sorting2 === 1) ? 2 : 1;
+                    $targetI.toggleClass('fa-angle-up fa-angle-down');
+                } else {
+                    self.vars.sorting1 = selectedFilterType;
+                    self.vars.sorting2 = 1;
+                    let $otherFilter = el.filters.not($clicked);
+                    $otherFilter.children('a').removeClass('active');
+                    $otherFilter.children('i').removeClass('fa-angle-up').addClass('fa-angle-down');
+                    $targetA.addClass('active');
+                    $targetI.removeClass('fa-angle-down').addClass('fa-angle-up');
+                }
+                self.reset();
+                self.loadData();
+            });
+
+            $(document).on('click','button[name="btnLinkPaging"]',function(){
+                el.pageArea.data('page',$(this).data('page'));
+                self.reset();
+                self.loadData();
+            });
+
+        },
+        getParams : function(){
+            return {
+                pcnt : el.pageArea.data('pcnt'),
+                page : el.pageArea.data('page'),
+                sorting1 : self.vars.sorting1,
+                sorting2 : self.vars.sorting2
+            };
+        },
+        reset : function(){
+            //el.pageArea.data('page',1);
+            el.pList.empty()
+        },
+        loadData : async function(){
+            let params = self.getParams();
+            let response = await Model.shop_m.Load_Shop_Medicine(params);
+            self.render(response);
+        },
+        render : function(response){
+            console.log(response);
+            let t_val = $('#token').val();
+            console.log(t_val);
+
+
+            let list = response.list;
+            let tcnt = response.total;
+            let totalRs = response.totalRs;
+            let npage = response.nPage;
+            let html = '';
+            let auth_style = '';
+
+            if (t_val == '') {
+                auth_style = 'guest_style';
+                console.log('hello');
+            } else {
+                auth_style = 'auth_style' ;
+                console.log('hello1');
+            }
+
+            if(tcnt > 0){
+                $.each(list, function(index, el) {
+                    // let AuthCss = ((el.Auth == AUTH_DECOC) || (el.Auth == AUTH_MASTER)) ? 'auth_style' : 'guest_style';
+                    //let Auth = ((el.Auth == AUTH_DECOC) || (el.Auth == AUTH_MASTER)) ? 'agree' : 'disagree';
+                    let Auth = 'agree';
+                    let subhtml1 = '';
+                    let subhtml2 = '';
+                    let subhtml3 = '';
+                    let like = '';
+                    let like1 = '';
+                    let likeDo = 1;
+                    let flexType = '';
+                    let t1_str = (el.t1_name=='') ? 'display: none;' : '';
+                    let t2_str = (el.t2_name=='') ? 'display: none;' : '';
+                    if(Auth=='disagree'){
+                        flexType = 'pt10';
+                    }
+                    if(el.hn_like == 0){
+                        like = '';
+                        like1 = 'fa-regular fa-heart wishHeart';
+                        likeDo = 1;
+                    }else{
+                        like = 'active';
+                        like1 = 'fa-solid fa-heart wishHeart active';
+                        likeDo = 2;
+                    }
+                    if(Auth=='agree'){
+                        subhtml1 = `
+                            <div class="cartbtn_box flexType1">
+                                <button type="button" class="cartbtn flexType1" name="addCart" data-code="${el.hncode}" data-cnt="1">
+                                    <i class="fa-solid fa-cart-shopping icon2 mr10"></i>
+                                    <p class="text">담기</p>
+                                </button>
+                            </div>
+                        `;
+                        subhtml2=`
+                                <div class="wishHeartBox flexType1 ${like}" name="btnLike" data-code="${el.hncode}" data-act="${likeDo}">
+                                    <i class="${like1}" id=""></i>
+                                </div>
+                        `;
+                        subhtml3 =`
+                                <div class="price_box flexType2">
+                                    <p class="price mr10" >${number_format(el.price || 0)}원</p>
+                                    <span class="calc">(근당 ${number_format(el.gunPrice || 0)}원) </span>
+                                </div>    
+                        `;
+                    }
+
+                    html +=`
+                        <div class="mer_wrap_type4 ${auth_style}">
+                            <div class="thumbox " type="button" name="btnPDetail" data-hncode="${el.hncode}">
+                                <img class="mainthum" src="/assets/product/image/${el.thumnail}" alt="img">
+                                <p class="nation">${el.n_value}</p>
+                            </div>
+                            ${subhtml1}
+                            <div class="itembox" onclick="">
+                                <div class="ttl_box flexType3-1 mb5">
+                                    <div class="flexType2">
+                                        <p class="title mr10">${el.hn_name} </p>
+                                        <p class="w_name mr10">${el.w_name}</p>
+                                        
+                                        <div class="tagbox flexType2 ${el.flexType}">
+                                            <p style="${t1_str}" class="type "> 
+                                                ${el.t1_name}
+                                            </p>
+                                            <p style="${t2_str}" class="type "> 
+                                                ${el.t2_name}
+                                            </p>
+                                        </div>
+                                    </div> 
+                                    ${subhtml2}
+                                </div>
+                                <div class="area area2 flexType3"> 
+                                    <div class="left"></div>
+                                    ${subhtml3} 
+                                </div> 
+                            </div> 
+                        </div>
+                   `;
+                });
+                el.pList.html(html);
+                el.totalRs.html(totalRs);
+
+                let options = {
+                    page : el.pageArea.data('page'),
+                    total : totalRs,
+                    perpage : el.pageArea.data('pcnt'),
+                    bname : 'btnLinkPaging'
+                }
+                el.pageArea.html(Make_Page_Html('simple',options));
+            }
+
+        },
+        open:function(){
+            self.reset();
+            self.loadData();
+        }
+
+
+
+    };
+
+
+
+
+})();

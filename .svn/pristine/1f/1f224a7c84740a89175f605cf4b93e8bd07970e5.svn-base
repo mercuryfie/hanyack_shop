@@ -1,0 +1,38 @@
+<?= $this->extend('/web/template/layout_default') ?>
+<?= $this->section('content') ?>
+
+<script src="<?=URL_COMMON_ASSETS?>/login_Do.js?rnd=<?=Prn_Rand();?>"></script>
+<section class="login">
+    <div class="login_wrap">
+        <p class="main_title"><?=MAIN_COM_TITLE;?> 로그인</p>
+        <div class="login_con id_con">
+            <input type="text" class="idinput" id='userid' placeholder="아이디" value="<?=$body['saveid'];?>">
+            <button type="button" class="clearBtn id_clear" data-target="#userid">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="login_con pw_con">
+            <input type="password" class="pwinput" id="passwd" placeholder="비밀번호" />
+            <div class="btn_box flexType2">
+                <button type="button" class="pw_toggle mr10" aria-label="비밀번호 보기">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </button>
+                <button type="button" class="clearBtn pw_clear" data-target="#passwd">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        <button type="button" id="btn_login" class="btnLogin">로그인</button>
+        <div class="autoLogin flexType1">
+            <div class="area area1 mr20 flexType2">
+                <input type="checkbox" name="saveid" id="saveid" <? if(!empty($body['saveid'])) echo('checked'); ?>>
+                <label for="">아이디 저장</label>
+            </div>
+            <input type="checkbox" name="autologin" id="autologin"  <? if(!empty($body['autologin'])) echo('checked'); ?>>
+            <label for="">자동 로그인</label>
+        </div>
+    </div>
+</section>
+<?= $this->endSection() ?>
+
+
