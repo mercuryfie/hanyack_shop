@@ -4,7 +4,6 @@ $(document).ready(function () {
         setTopMenuHighlight();
     });
 
-
     $('#btnHSearch').on('click',function(){
         const skey = $('#h_sKey').val();
         if(skey==''){
@@ -40,17 +39,66 @@ $(document).ready(function () {
     //             .slideUp(200);
     //     });
     // });
-    $(function () {
-        $('.hbox1-3 .top_gnb_ul > li').on('mouseenter', function () {
-            $('.hbox1-3 .sub_menu_wrap').addClass('active');
-        });
+    // $(function () {
+    //     $('.top_menu_wrap ').on('mouseenter', function () {
+    //         $('.sub_menu_wrap').addClass('active');
+    //     });
+    //
+    //     $('.top_menu_wrap').on('mouseleave', function () {
+    //         $('.sub_menu_wrap').removeClass('active');
+    //     });
+    // });
 
-        $('.hbox1-3').on('mouseleave', function () {
-            $('.hbox1-3 .sub_menu_wrap').removeClass('active');
-        });
+
+    var $menuArea = $('.top_menu_wrap, .sub_menu_wrap');
+    var $subMenuWrap = $('.sub_menu_wrap');
+
+    $menuArea.on('mouseenter', function () {
+        $subMenuWrap.addClass('active');
     });
 
+    $menuArea.on('mouseleave', function () {
+        setTimeout(function () {
+            if (!$('.top_menu_wrap:hover').length && !$('.sub_menu_wrap:hover').length) {
+                $subMenuWrap.removeClass('active');
+            }
+        }, 50);
+    });
+
+
+
 });
+
+
+// submenu --------------
+function handleHover(menuSelector, submenuSelector) {
+    var submenu = $(submenuSelector);
+    $(menuSelector + ", " + submenuSelector).on("mouseenter", function () {
+        if (!submenu.is(":visible")) {
+            submenu
+                .stop(true, true)
+                .css({display: "flex", position: "absolute", left: "80px", opacity: 0.3, zIndex: 12})
+                .animate({left: "120px", opacity: 1}, 300);
+        }
+    });
+
+    $(document).on("mousemove", function (event) {
+        var menu = $(menuSelector);
+
+        if (!menu.is(event.target) && menu.has(event.target).length === 0 &&
+            !submenu.is(event.target) && submenu.has(event.target).length === 0) {
+            submenu
+                .stop(true, true)
+                .animate({left: "80px", opacity: 0}, 300, function () {
+                    $(this).css("display", "none");
+                });
+        }
+    });
+}
+
+handleHover(".top_menu.down_1", ".submenu1-1");
+handleHover(".topmenu1-2", ".submenu1-2");
+handleHover(".topmenu1-4", ".submenu1-4");
 
 function setTopMenuHighlight() {
     var path = (window.location.pathname + window.location.search).toLowerCase();

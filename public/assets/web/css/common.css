@@ -3941,12 +3941,6 @@ input[type="radio"] {
 
 }
 
-.topbox1-3 {
-    /*display: flex;*/
-    /*justify-content: flex-end;*/
-    /*justify-content: space-between;*/
-    /*width: 140px;*/
-}
 
 .topbox1-3.hTyp1 {
     width: 100px;
@@ -3995,16 +3989,62 @@ input[type="radio"] {
     line-height: 10px;
 }
 
+.hbox1-3 .right{
+    position: relative;
+    /*display: flex;*/
+    /*justify-content: flex-end;*/
+    /*justify-content: space-between;*/
+    /*width: 140px;*/
+}
 
-.hbox1-3 .menu_wrap a.top_menu{
+.hbox1-3 .top_menu_wrap {
+
+}
+
+.hbox1-3 .top_menu_wrap a.top_menu{
     /*color: red;*/
     font-family: "Gmarket Sans";
+    /*border:1px solid red;*/
+    border-left: 1px solid #ccc;
+    width: 140px;
+    text-align: center;
+}
+
+.hbox1-3 .top_menu_wrap a.top_menu:first-child {
+    border-left: none;
+}
+
+.hbox1-3 .sub_menu_wrap {
+    display: none;
+    position: absolute;
+    top: 25px;
+    left:0px;
+    width: 420px;
+    min-height: 170px;
+    padding-bottom: 10px;
+    height: auto;
+    z-index: 30;
+}
+
+.hbox1-3 .sub_menu_wrap.active {
+    display: flex;
+    /*border:1px solid red;*/
+
+    background-color: #ececec61;
+    /*background-color: #fff;*/
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 
 }
 
 a.top_menu + a.top_menu::before {
-    content: "|";
-    margin: 0 15px;
+    /*content: "|";*/
+    border-left: 1px solid #ccc;
+    /*margin: 0 15px;*/
+    /*padding: 0 20px;*/
+    /*mar*/
     color: #ccc;
 }
 
@@ -4013,6 +4053,25 @@ a.top_menu.active {
     font-weight: 500;
 }
 
+.hbox1-3 .sub_box {
+    width: 140px;
+    /*border:1px solid red;*/
+    /*margin-right: 10px;*/
+}
+.hbox1-3 .sub_box a.sub_menu{
+    /*border:1px solid red;*/
+    width: auto;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.hbox1-3 .sub_box a.sub_menu:hover {
+    color: var(--main-color);
+    border-bottom: 1px solid var(--color3);
+}
+.hbox1-3 .sub_box a.sub_menu:last-child {
+}
 /* common list style start --------- */
 
 
